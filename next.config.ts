@@ -1,7 +1,9 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -17,7 +19,10 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    unoptimized: true,
   },
+  assetPrefix: isProd ? '/robot-visionary_test/' : '',
+  trailingSlash: true,
 };
 
 export default nextConfig;
