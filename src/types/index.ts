@@ -25,6 +25,13 @@ export interface StoredRobotAssessment {
   userMajor: string;
 }
 
+export interface AssessmentResult {
+  robotId: string;
+  robotName: string;
+  timestamp: string;
+  scores: Record<string, number>;
+}
+
 export interface AssessmentSession {
   selectedRobots: RobotImage[];
   currentRobotIndex: number;

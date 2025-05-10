@@ -11,8 +11,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "export": "next build && next export",
-    "deploy": "gh-pages -d out"
-
+    "deploy": "next build && echo.> out/.nojekyll && gh-pages -d out --dotfiles"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.8.0",

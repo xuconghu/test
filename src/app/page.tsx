@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { RobotDisplay } from '@/components/image-upload-area';
-import { AssessmentPanel } from '@/components/assessment-panel';
+import dynamic from 'next/dynamic';
+// 使用动态导入
+const RobotDisplay = dynamic(() => import('@/components/image-upload-area').then(mod => ({ default: mod.RobotDisplay })), { ssr: false });
+const AssessmentPanel = dynamic(() => import('@/components/assessment-panel').then(mod => ({ default: mod.AssessmentPanel })), { ssr: false });
 import { ASSESSMENT_QUESTIONS as ALL_QUESTIONS, INITIAL_SLIDER_VALUE } from '@/config/questions';
 import { getRandomRobots, ROBOTS_PER_ASSESSMENT } from '../config/robots';
-import type { AssessmentQuestion, StoredRobotAssessment, RobotImage, AssessmentSession } from '@/types';
-import { Bot, Save, Download, ChevronRight, Upload, ExternalLink, User, Brain, Award, Book, AlertTriangle, Info, Braces, PencilRuler, Clipboard, Activity, BrainCircuit } from 'lucide-react';
+import type { AssessmentQuestion, StoredRobotAssessment, RobotImage, AssessmentSession, AssessmentResult } from '@/types';
+import { Bot, Save, Download, ChevronRight, Upload, ExternalLink, User, Brain, Award, Book, AlertTriangle, Info, Braces, PencilRuler, Clipboard, Activity, BrainCircuit, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -32,6 +34,28 @@ const calculateOverallScore = (values: number[]): number => {
   const sum = values.reduce((acc, val) => acc + val, 0);
   return Math.round(sum / values.length);
 };
+
+// 简单的调试信息组件
+function DebugInfo({ robot }: { robot: RobotImage | null }) {
+  if (!robot) return null;
+  
+  return (
+    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+      <div className="flex items-start gap-2">
+        <AlertTriangle className="text-yellow-500 h-5 w-5 mt-0.5" />
+        <div className="text-xs text-yellow-700">
+          <p className="font-medium">图片加载调试信息：</p>
+          <div className="mt-1 font-mono text-[10px] break-all">
+            <p>ID: {robot.id}</p>
+            <p>名称: {robot.name}</p>
+            <p>文件路径: {robot.filename}</p>
+            <p>完整URL: {typeof window !== 'undefined' ? `${window.location.origin}${robot.filename}` : '(客户端渲染)'}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function RobotVisionaryPage() {
   // 用户信息状态
@@ -92,6 +116,8 @@ export default function RobotVisionaryPage() {
       description: `${userInfo.name}，欢迎参与机器人评估！`,
       duration: 3000,
     });
+    
+    console.log("用户信息已保存，表单隐藏状态:", showUserForm);
   };
 
   // 初始化: 随机选择机器人和问题
@@ -117,6 +143,13 @@ export default function RobotVisionaryPage() {
       setSliderValues(shuffledQuestions.map(() => INITIAL_SLIDER_VALUE));
     }
   }, [shuffledQuestions]);
+
+  // 调试：显示选中的机器人
+  useEffect(() => {
+    if (session.selectedRobots.length > 0) {
+      console.log("Selected robots:", session.selectedRobots.map(r => ({ id: r.id, name: r.name, path: r.filename })));
+    }
+  }, [session.selectedRobots]);
 
   // 获取当前机器人
   const currentRobot = session.selectedRobots[session.currentRobotIndex] || null;
@@ -234,6 +267,60 @@ export default function RobotVisionaryPage() {
     ? Math.round((session.completedAssessments.length / session.selectedRobots.length) * 100)
     : 0;
 
+  // 开发调试用：强制跳过表单（仅用于测试）
+  useEffect(() => {
+    // 取消注释下面这行以启用自动跳过表单模式
+    setShowUserForm(false);
+    console.log("当前表单显示状态:", showUserForm);
+  }, []);
+
+  // 渲染评估完成界面
+  if (isAllCompleted) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background text-foreground">
+        <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
+          <div className="container flex h-20 items-center justify-between px-4 md:px-6">
+            <div className="flex items-center gap-3">
+              <Bot className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold tracking-tight">
+                智视未来
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 container mx-auto p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <CheckCircle className="w-10 h-10 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold mb-2">评估完成</h1>
+            <p className="text-muted-foreground mb-8 max-w-lg">
+              感谢您完成所有机器人的评估。您已评估了 {session.selectedRobots.length} 个机器人，生成了总共 {Object.keys(session.completedAssessments[0]?.sliderValues || {}).length * session.completedAssessments.length} 个评分数据点。
+            </p>
+            
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Button className="min-w-[160px]" onClick={() => setSession(prev => ({ ...prev, currentRobotIndex: 0 }))} disabled={!session.selectedRobots.length}>
+                开始新的评估
+              </Button>
+              <Button variant="outline" className="min-w-[160px]" onClick={handleFinishAndExport}>
+                导出评估数据 (CSV)
+              </Button>
+            </div>
+          </div>
+        </main>
+
+        <footer className="py-6 border-t bg-card">
+          <div className="container flex flex-col items-center justify-center gap-2 md:h-20 md:flex-row">
+            <p className="text-center text-sm leading-loose text-muted-foreground">
+              智视未来 &copy; {new Date().getFullYear()}. 洞察评估未来。
+            </p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-sm">
@@ -320,6 +407,14 @@ export default function RobotVisionaryPage() {
                   className="w-full mt-6 py-5 text-base"
                 >
                   开始评估
+                </Button>
+                
+                {/* 临时测试按钮，仅用于开发测试 */}
+                <Button 
+                  onClick={() => setShowUserForm(false)} 
+                  className="w-full mt-3 py-2 text-sm bg-yellow-500 hover:bg-yellow-600"
+                >
+                  测试模式：直接进入评估界面
                 </Button>
               </CardContent>
             </Card>
