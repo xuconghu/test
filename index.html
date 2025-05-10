@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智视未来 - 机器人能力评估</title>
+  <style>
+    /* 基本样式 */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 15px 0;
+      margin-bottom: 30px;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+    
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #4a6bff;
+      margin-left: 10px;
+    }
+    
+    .heading {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    .subheading {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #666;
+      font-weight: normal;
+    }
+    
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+    }
+    
+    button {
+      background-color: #4a6bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #3a51cc;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title svg {
+      margin-right: 10px;
+    }
+    
+    .info-item {
+      display: flex;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    
+    .info-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
+      color: #4a6bff;
+    }
+    
+    .info-content h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+    
+    .info-content p {
+      margin: 0;
+      line-height: 1.5;
+      color: #666;
+    }
+    
+    .alert {
+      background-color: #fff8e6;
+      border: 1px solid #ffe0b2;
+      border-radius: 4px;
+      padding: 12px;
+      margin-top: 20px;
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .alert-icon {
+      flex-shrink: 0;
+      margin-right: 10px;
+      color: #f57c00;
+    }
+    
+    .alert-content {
+      font-size: 0.9rem;
+      color: #7a5400;
+    }
+    
+    footer {
+      background-color: #fff;
+      border-top: 1px solid #eee;
+      padding: 20px 0;
+      margin-top: 40px;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 20px 0;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6bff">
+        <path d="M12 8V4H8"></path>
+        <rect x="2" y="14" width="20" height="8" rx="2"></rect>
+        <path d="M6 18h.01"></path>
+        <path d="M10 18h.01"></path>
+        <path d="M14 18h.01"></path>
+        <path d="M18 18h.01"></path>
+        <path d="M17 11v-1"></path>
+        <path d="M7 11v-1"></path>
+        <path d="M12 12v-4"></path>
+      </svg>
+      <div class="logo">智视未来</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <!-- 用户信息表单 -->
+      <div class="card">
+        <div class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6bff">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          参与者信息
+        </div>
+        <div class="subheading">请先填写您的基本信息再开始评估</div>
+        
+        <form id="userInfoForm">
+          <div class="form-group">
+            <label for="name">姓名</label>
+            <input type="text" id="name" placeholder="请输入您的姓名" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="age">年龄</label>
+            <input type="number" id="age" placeholder="请输入您的年龄" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="gender">性别</label>
+            <select id="gender" required>
+              <option value="" disabled selected>请选择您的性别</option>
+              <option value="男">男</option>
+              <option value="女">女</option>
+              <option value="其他">其他</option>
+              <option value="不愿透露">不愿透露</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="major">专业</label>
+            <input type="text" id="major" placeholder="请输入您所学的专业" required>
+          </div>
+          
+          <button type="submit">开始评估</button>
+        </form>
+      </div>
+      
+      <!-- 研究信息 -->
+      <div class="card">
+        <div class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6bff">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          关于本研究
+        </div>
+        
+        <div class="section">
+          <div class="info-item">
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+              <line x1="16" y1="8" x2="2" y2="22"></line>
+              <line x1="17.5" y1="15" x2="9" y2="15"></line>
+            </svg>
+            <div class="info-content">
+              <h3>研究目标</h3>
+              <p>本研究旨在通过人类对机器人的评估数据，分析人们如何认知和评价不同类型机器人的潜能。您的参与将帮助我们更好地理解人类-机器人交互的认知基础。</p>
+            </div>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <div class="info-item">
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <div class="info-content">
+              <h3>评估流程</h3>
+              <p>您将评估3个随机选择的机器人形象，每个机器人需要回答27个关于其各方面潜能的问题。请确保每个问题都经过认真思考后再作答。</p>
+            </div>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <div class="info-item">
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+            <div class="info-content">
+              <h3>数据用途</h3>
+              <p>您的评估数据将用于科学研究，帮助我们分析人类对机器人能力的认知模式，并可能为未来机器人设计提供洞见。所有数据将以匿名方式处理。</p>
+            </div>
+          </div>
+          
+          <div class="alert">
+            <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div class="alert-content">
+              <strong>重要提示：</strong> 评估过程中请确保对每个问题都进行评分，未完成所有问题将无法进入下一个机器人的评估。完成所有机器人评估后，请务必导出并提交您的评估数据。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>智视未来 &copy; 2025. 洞察评估未来。</p>
+  </footer>
+
+  <script>
+    document.getElementById('userInfoForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 收集表单数据
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+      const gender = document.getElementById('gender').value;
+      const major = document.getElementById('major').value;
+      
+      // 验证数据
+      if (!name || !age || !gender || !major) {
+        alert('请填写所有字段再继续。');
+        return;
+      }
+      
+      if (isNaN(parseInt(age)) || parseInt(age) <= 0) {
+        alert('请输入有效的年龄数字。');
+        return;
+      }
+      
+      // 数据有效，可以保存并进入主应用
+      // 在这里你可以添加导航到主应用的代码
+      alert(`谢谢您，${name}！您现在可以开始评估了。`);
+      
+      // 重定向到你的主应用
+      // 这里只是示例，你需要根据实际情况修改
+      window.location.href = 'https://xuconghu.github.io/robot-visionary_test/';
+    });
+  </script>
+</body>
+</html> 
