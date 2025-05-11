@@ -49,3 +49,24 @@ npm run build
 - TypeScript
 - Tailwind CSS
 - Radix UI 组件库
+
+## 许可证
+
+本项目采用 **知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议（CC BY-NC-ND 4.0）**，附带特殊的学术引用要求：
+
+- **署名**：必须给出适当的署名，提供指向原始仓库的链接
+- **非商业性使用**：禁止将本软件用于商业目的
+- **禁止演绎**：禁止修改、转换或基于本作品创建衍生作品
+- **学术引用**：任何使用或引用本软件的学术论文、出版物必须引用原作者
+
+详细信息请查看[LICENSE](./LICENSE)文件和[Creative Commons官方网站](https://creativecommons.org/licenses/by-nc-nd/4.0/)。
+
+## 引用格式
+
+如果您在学术或研究工作中使用本项目，请使用以下格式进行引用：
+
+```
+作者姓名. (年份). 机器人远见家: 机器人能力评估平台. [软件]. GitHub: https://github.com/your-username/robot-visionary
+```
+
+Copyright © 2023-2024 智视未来. 保留所有权利。

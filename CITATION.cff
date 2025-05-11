@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "如果您在研究中使用了本软件，请使用以下方式引用"
+title: "机器人远见家：机器人能力评估平台"
+abstract: "一个用于评估机器人感知、行为和因果性等能力的Web评估平台"
+authors:
+  - family-names: "智视未来团队"
+    given-names: ""
+date-released: 2024-05-01
+license: CC-BY-NC-ND-4.0
+license-url: https://creativecommons.org/licenses/by-nc-nd/4.0/
+url: "https://github.com/your-username/robot-visionary"
+repository-code: "https://github.com/your-username/robot-visionary"
+keywords:
+  - "机器人评估"
+  - "人工智能"
+  - "人机交互"
+  - "感知能力"
+  - "行为分析"
+references:
+  - type: software
+    authors:
+      - family-names: "智视未来团队"
+        given-names: ""
+    title: "机器人远见家平台"
+    year: 2024 

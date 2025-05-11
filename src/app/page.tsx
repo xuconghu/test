@@ -76,6 +76,50 @@ export default function RobotVisionaryPage() {
   });
   const { toast } = useToast();
 
+  // 添加跳转到结束界面的功能
+  const handleSkipToEnd = () => {
+    // 创建三个虚拟完成的评估记录
+    const dummyAssessments: StoredRobotAssessment[] = [];
+    for (let i = 0; i < 3; i++) {
+      dummyAssessments.push({
+        robotId: `robot${i+1}`,
+        robotName: `测试机器人${i+1}`,
+        robotImageUrl: `/robot-images/${i+1}_test.jpg`,
+        timestamp: new Date().toISOString(),
+        sliderValues: Array(27).fill(50), // 27个问题，全部评分50
+        shuffledQuestionsSnapshot: shuffledQuestions.length > 0 ? [...shuffledQuestions] : [],
+        overallScore: 50,
+        userName: userInfo.name || '测试用户',
+        userAge: Number(userInfo.age) || 25,
+        userGender: userInfo.gender || '未指定',
+        userMajor: userInfo.major || '测试专业'
+      });
+    }
+    
+    // 设置模拟的机器人数据
+    const dummyRobots: RobotImage[] = Array(3).fill(null).map((_, i) => ({
+      id: `robot${i+1}`,
+      filename: `/robot-images/${i+1}_test.jpg`,
+      name: `测试机器人${i+1}`
+    }));
+    
+    // 更新session状态，直接跳转到结束界面
+    setSession({
+      selectedRobots: dummyRobots,
+      currentRobotIndex: 3, // 设置为数组长度，表示已完成全部评估
+      completedAssessments: dummyAssessments
+    });
+    
+    // 关闭表单界面
+    setShowUserForm(false);
+    
+    toast({
+      title: "已跳转到结束界面",
+      description: "这是一个测试功能，用于直接查看结束界面",
+      duration: 3000,
+    });
+  };
+
   // 处理用户信息输入变化
   const handleUserInfoChange = (field: string, value: string) => {
     setUserInfo(prev => ({
@@ -269,8 +313,8 @@ export default function RobotVisionaryPage() {
 
   // 开发调试用：强制跳过表单（仅用于测试）
   useEffect(() => {
-    // 取消注释下面这行以启用自动跳过表单模式
-    setShowUserForm(false);
+    // 注释下面这行以禁用自动跳过表单模式
+    // setShowUserForm(false);
     console.log("当前表单显示状态:", showUserForm);
   }, []);
 
@@ -290,21 +334,61 @@ export default function RobotVisionaryPage() {
         </header>
 
         <main className="flex-1 container mx-auto p-4 md:p-6 lg:p-8">
-          <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
               <CheckCircle className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold mb-2">评估完成</h1>
-            <p className="text-muted-foreground mb-8 max-w-lg">
+            <p className="text-muted-foreground mb-8 max-w-xl">
               感谢您完成所有机器人的评估。您已评估了 {session.selectedRobots.length} 个机器人，生成了总共 {Object.keys(session.completedAssessments[0]?.sliderValues || {}).length * session.completedAssessments.length} 个评分数据点。
             </p>
             
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Button className="min-w-[160px]" onClick={() => setSession(prev => ({ ...prev, currentRobotIndex: 0 }))} disabled={!session.selectedRobots.length}>
-                开始新的评估
-              </Button>
-              <Button variant="outline" className="min-w-[160px]" onClick={handleFinishAndExport}>
-                导出评估数据 (CSV)
+            <div className="w-full max-w-md space-y-4">
+              {/* 第一步：导出评估数据 */}
+              <div className="bg-card rounded-lg border shadow-sm p-6">
+                <h3 className="text-xl font-semibold mb-4 flex gap-2 items-center">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-medium">1</span>
+                  导出评估数据
+                </h3>
+                <Button 
+                  onClick={handleFinishAndExport} 
+                  className="w-full py-5"
+                  size="lg"
+                >
+                  <Download className="mr-2 h-5 w-5" /> 导出评估数据 (CSV)
+                </Button>
+              </div>
+              
+              {/* 第二步：上传到WPS表单 */}
+              <div className="bg-card rounded-lg border shadow-sm p-6">
+                <h3 className="text-xl font-semibold mb-4 flex gap-2 items-center">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-sm font-medium">2</span>
+                  上传CSV文件到WPS表单
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  <span className="font-bold text-red-500">重要提示：</span> 请将导出的CSV文件上传至以下WPS表单
+                </p>
+                <a 
+                  href="https://f.wps.cn/g/GTGsCwjw/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center py-5 px-4 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium text-base transition-colors"
+                >
+                  <Upload className="mr-2 h-5 w-5" /> 前往WPS表单上传数据
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  表单名称：【WPS表单】邀你填写「数据采集」
+                </p>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                className="w-full py-5 mt-4"
+                onClick={() => setSession(prev => ({ ...prev, currentRobotIndex: 0 }))}
+                disabled={!session.selectedRobots.length}
+              >
+                <Bot className="mr-2 h-5 w-5" /> 开始新的评估
               </Button>
             </div>
           </div>
@@ -313,10 +397,25 @@ export default function RobotVisionaryPage() {
         <footer className="py-6 border-t bg-card">
           <div className="container flex flex-col items-center justify-center gap-2 md:h-20 md:flex-row">
             <p className="text-center text-sm leading-loose text-muted-foreground">
-              智视未来 &copy; {new Date().getFullYear()}. 洞察评估未来。
+              智视未来 &copy; {new Date().getFullYear()}. 保留所有权利。本平台采用<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" className="text-primary underline hover:no-underline ml-1" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0许可证</a>，禁止商业使用及创建衍生作品。
             </p>
           </div>
         </footer>
+        
+        {/* 测试按钮 - 跳转到结束界面 */}
+        <div className="fixed bottom-4 right-4 z-50">
+          <Button 
+            onClick={handleSkipToEnd}
+            variant="outline"
+            size="sm"
+            className="bg-gray-700 hover:bg-gray-600 text-white border-gray-600"
+          >
+            <span className="flex items-center">
+              <ChevronRight className="mr-1 h-4 w-4" />
+              跳转到结束界面
+            </span>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -407,14 +506,6 @@ export default function RobotVisionaryPage() {
                   className="w-full mt-6 py-5 text-base"
                 >
                   开始评估
-                </Button>
-                
-                {/* 临时测试按钮，仅用于开发测试 */}
-                <Button 
-                  onClick={() => setShowUserForm(false)} 
-                  className="w-full mt-3 py-2 text-sm bg-yellow-500 hover:bg-yellow-600"
-                >
-                  测试模式：直接进入评估界面
                 </Button>
               </CardContent>
             </Card>
@@ -552,40 +643,45 @@ export default function RobotVisionaryPage() {
                   上传CSV文件到WPS表单
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  请勿急于退出，将下载的CSV文件上传到以下WPS表单链接：
+                  <span className="font-bold text-red-500">重要：</span> 请勿关闭此页面！请将下载的CSV文件上传到以下WPS表单链接：
                 </p>
                 <a 
                   href="https://f.wps.cn/g/GTGsCwjw/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center justify-center py-5 px-4 w-full bg-accent text-accent-foreground hover:bg-accent/90 rounded-md font-medium text-base"
+                  className="flex items-center justify-center py-5 px-4 w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 rounded-md font-medium text-base transition-all shadow-md hover:shadow-lg"
                 >
-                  <Upload className="mr-2 h-5 w-5" /> 前往WPS表单上传数据
+                  <Upload className="mr-2 h-5 w-5" /> 前往WPS表单上传数据 - https://f.wps.cn/g/GTGsCwjw/
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  表单名称：【WPS表单】邀你填写「数据采集」
-                </p>
-              </div>
-              
-              <div className="rounded-lg border bg-card text-card-foreground/80 p-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 pt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-primary">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 8v4" />
-                      <path d="M12 16h.01" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium">重要提示</h3>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      <p>
-                        上传CSV文件是本次评估的最后一步，对于研究数据收集至关重要。请确保完成此步骤。
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                  <div className="flex items-start">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-800">重要提示</p>
+                      <p className="mt-1 text-xs text-amber-700">
+                        上传CSV文件是本次研究数据收集的最后一步，对于研究数据分析至关重要。请确保完成此步骤后再关闭页面。表单名称为：【WPS表单】邀你填写「数据采集」。
                       </p>
                     </div>
                   </div>
                 </div>
+              </div>
+              
+              {/* 添加额外的提示和按钮 */}
+              <div className="mt-8 text-center">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
+                  <h3 className="text-red-700 font-bold text-lg mb-2">请勿跳过上传步骤！</h3>
+                  <p className="text-red-600">为确保您的评估数据能够被收集和分析，请务必完成CSV文件的上传。</p>
+                </div>
+                
+                <a 
+                  href="https://f.wps.cn/g/GTGsCwjw/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center justify-center py-4 px-8 bg-red-600 text-white hover:bg-red-700 rounded-md font-bold text-lg transition-all shadow-lg hover:shadow-xl"
+                >
+                  <Upload className="mr-2 h-6 w-6" /> 立即上传到WPS表单
+                </a>
               </div>
             </CardContent>
           </Card>
@@ -634,10 +730,25 @@ export default function RobotVisionaryPage() {
       <footer className="py-6 border-t bg-card">
         <div className="container flex flex-col items-center justify-center gap-2 md:h-20 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground">
-            智视未来 &copy; {new Date().getFullYear()}. 洞察评估未来。
+            智视未来 &copy; {new Date().getFullYear()}. 保留所有权利。本平台采用<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" className="text-primary underline hover:no-underline ml-1" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0许可证</a>，禁止商业使用及创建衍生作品。
           </p>
         </div>
       </footer>
+      
+      {/* 测试按钮 - 跳转到结束界面 */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <Button 
+          onClick={handleSkipToEnd}
+          variant="outline"
+          size="sm"
+          className="bg-gray-700 hover:bg-gray-600 text-white border-gray-600"
+        >
+          <span className="flex items-center">
+            <ChevronRight className="mr-1 h-4 w-4" />
+            跳转到结束界面
+          </span>
+        </Button>
+      </div>
     </div>
   );
 }
